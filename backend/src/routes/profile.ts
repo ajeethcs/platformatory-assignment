@@ -1,6 +1,8 @@
 import express from "express";
 import { checkJwt } from "../middleware/auth";
 import User from "../models/User";
+import { Connection, WorkflowClient } from "@temporalio/client";
+import { updateUserWorkflow } from "../temporal/workflows/updateUserWorkflow";
 
 const router = express.Router();
 
@@ -22,18 +24,37 @@ router.get("/", async (req: any, res) => {
 router.post("/", checkJwt, async (req: any, res) => {
   const { firstName, lastName, phone, city, pincode } = req.body;
   const user = req.user as { sub?: string } | undefined;
-  console.log("Nakkal user=", user, "thoof");
+
   if (!user || !user.sub) {
     return res.status(401).json({ message: "Unauthorized: Missing user ID" });
   }
 
-  const updated = await User.findOneAndUpdate(
-    { sub: req.user.sub },
-    { firstName, lastName, phone, city, pincode },
-    { upsert: true, new: true }
-  );
+  const connection = await Connection.connect({
+    address: "localhost:7233",
+  });
 
-  res.json(updated);
+  const client = new WorkflowClient({
+    connection,
+  });
+
+  const handle = await client.start(updateUserWorkflow, {
+    taskQueue: "user-task-queue",
+    workflowId: `update-user-${user.sub}-${Date.now()}`,
+    args: [
+      {
+        sub: user.sub,
+        firstName,
+        lastName,
+        phone,
+        city,
+        pincode,
+      },
+    ],
+  });
+
+  const updatedUser = await handle.result();
+
+  res.json(updatedUser);
 });
 
 export default router;
