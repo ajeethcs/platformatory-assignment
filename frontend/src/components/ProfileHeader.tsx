@@ -1,4 +1,3 @@
-// components/ProfileHeader.tsx
 import {
   Avatar,
   Box,
@@ -32,7 +31,7 @@ export default function ProfileHeader({
   onChange,
 }: Props) {
   return (
-    <Paper elevation={3} className="profile-banner">
+    <Paper square={false} variant="outlined" className="profile-banner">
       <Box className="cover-banner" />
       <Box className="profile-header-content">
         <Avatar

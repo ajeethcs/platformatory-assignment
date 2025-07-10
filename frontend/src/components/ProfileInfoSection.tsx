@@ -1,4 +1,3 @@
-// components/ProfileInfoSection.tsx
 import { Grid, Paper, TextField, Typography, Alert } from "@mui/material";
 
 type Props = {
@@ -21,7 +20,7 @@ export default function ProfileInfoSection({
   ];
 
   return (
-    <Paper elevation={2} sx={{ p: 3, mt: 3 }}>
+    <Paper elevation={2} variant="outlined" sx={{ p: 3, mt: 3 }}>
       <Typography variant="h6" gutterBottom>
         Contact Details
       </Typography>

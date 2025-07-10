@@ -2,7 +2,14 @@
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
-import { Box, CircularProgress, Container } from "@mui/material";
+import {
+  Alert,
+  Box,
+  CircularProgress,
+  Container,
+  Paper,
+  Snackbar,
+} from "@mui/material";
 import ProfileHeader from "../components/ProfileHeader";
 import ProfileInfoSection from "../components/ProfileInfoSection";
 import ActionCards from "../components/ActionCards";
@@ -32,6 +39,7 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [editMode, setEditMode] = useState(false);
+  const [openNotification, setOpenNotification] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -77,10 +85,12 @@ export default function ProfilePage() {
         },
       });
 
-      alert("Profile saved!");
+      //   alert("Profile saved!");
+      setOpenNotification(true);
       setEditMode(false);
     } catch (err) {
       console.error(err);
+      setOpenNotification(false);
       setError("Failed to save profile");
     } finally {
       setSaving(false);
@@ -95,8 +105,13 @@ export default function ProfilePage() {
     );
   }
 
+  const handleClose = () => {
+    setOpenNotification(false);
+  };
+
   return (
-    <Container maxWidth="md">
+    // <Paper elevation={3} className="profile-banner">
+    <Container maxWidth="xl">
       <ProfileHeader
         user={user}
         profile={profile}
@@ -115,6 +130,22 @@ export default function ProfilePage() {
         error={error}
       />
       <ActionCards />
+      <Snackbar
+        open={openNotification}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleClose}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Profile saved succesfully!
+        </Alert>
+      </Snackbar>
     </Container>
+    // </Paper>
   );
 }

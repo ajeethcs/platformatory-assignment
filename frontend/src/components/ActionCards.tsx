@@ -1,4 +1,3 @@
-// components/ActionCards.tsx
 import { Grid, Paper, Typography, Box } from "@mui/material";
 
 const actions = [
@@ -21,7 +20,7 @@ export default function ActionCards() {
     <Grid container spacing={2} mt={3}>
       {actions.map((action) => (
         <Grid item xs={12} sm={4} key={action.title}>
-          <Paper elevation={1} sx={{ p: 2 }}>
+          <Paper variant="outlined" elevation={1} sx={{ p: 2 }}>
             <Typography fontWeight={600}>{action.title}</Typography>
             <Typography variant="body2" color="text.secondary">
               {action.description}
