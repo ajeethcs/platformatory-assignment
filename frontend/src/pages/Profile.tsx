@@ -1,0 +1,163 @@
+import { useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+import axios from "axios";
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  CircularProgress,
+  Alert,
+} from "@mui/material";
+
+type ProfileType = {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  city: string;
+  pincode: string;
+};
+
+export default function Profile() {
+  const { user, getAccessTokenSilently, isAuthenticated, isLoading } =
+    useAuth0();
+
+  const [profile, setProfile] = useState<ProfileType>({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    city: "",
+    pincode: "",
+  });
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = await getAccessTokenSilently({
+          authorizationParams: {
+            audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+          },
+        });
+        debugger;
+        const res = await axios.get("http://localhost:5000/api/profile", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        setProfile(res.data);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load profile");
+        setLoading(false);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchProfile();
+    }
+  }, [isAuthenticated, getAccessTokenSilently]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setProfile({ ...profile, [e.target.name]: e.target.value });
+  };
+
+  const saveProfile = async () => {
+    try {
+      setSaving(true);
+      setError("");
+
+      const token = await getAccessTokenSilently({
+        audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+      });
+      console.log("token values=", token);
+      await axios.post("http://localhost:5000/api/profile", profile, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      alert("Profile saved!");
+      setSaving(false);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to save profile");
+      setSaving(false);
+    }
+  };
+
+  if (isLoading || loading)
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
+        <CircularProgress />
+      </Box>
+    );
+
+  return isAuthenticated ? (
+    <Container maxWidth="sm" sx={{ mt: 5 }}>
+      <Typography variant="h4" gutterBottom>
+        Edit Profile
+      </Typography>
+
+      {error && <Alert severity="error">{error}</Alert>}
+
+      <Box
+        component="form"
+        sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+      >
+        <TextField
+          label="First Name"
+          name="firstName"
+          value={profile.firstName}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="Last Name"
+          name="lastName"
+          value={profile.lastName}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="Phone"
+          name="phone"
+          value={profile.phone}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="City"
+          name="city"
+          value={profile.city}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="Pincode"
+          name="pincode"
+          value={profile.pincode}
+          onChange={handleChange}
+          fullWidth
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={saveProfile}
+          disabled={saving}
+        >
+          {saving ? "Saving..." : "Save"}
+        </Button>
+      </Box>
+    </Container>
+  ) : (
+    <Typography>Please login.</Typography>
+  );
+}
