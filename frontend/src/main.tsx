@@ -3,8 +3,9 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { Auth0Provider } from "@auth0/auth0-react";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
+import theme from "./theme";
 
-const theme = createTheme();
+// const theme = createTheme();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import { useAuth0 } from "@auth0/auth0-react";
 import { CircularProgress, Box } from "@mui/material";
+import ProfilePage from "./pages/ProfilePage";
 
 export default function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -10,7 +11,10 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
+      <Box
+        boxShadow="none"
+        sx={{ display: "flex", justifyContent: "center", mt: 10 }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -19,11 +23,28 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
         <Route
           path="/profile"
-          element={isAuthenticated ? <Profile /> : <Navigate to="/" replace />}
+          element={
+            isAuthenticated ? <ProfilePage /> : <Navigate to="/login" replace />
+          }
         />
+        <Route
+          path="*"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/profile" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        {/* <Route
+          path="/profile"
+          element={isAuthenticated ? <Profile /> : <Navigate to="/" replace />}
+        /> */}
       </Routes>
     </BrowserRouter>
   );

@@ -1,15 +1,26 @@
+// pages/ProfilePage.tsx
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
-import { Box, CircularProgress, Container, Typography } from "@mui/material";
-import AppLayout from "../components/AppLayout";
-import ProfileForm from "../components/ProfileForm";
+import { Box, CircularProgress, Container } from "@mui/material";
+import ProfileHeader from "../components/ProfileHeader";
+import ProfileInfoSection from "../components/ProfileInfoSection";
+import ActionCards from "../components/ActionCards";
+import "../styles/profile.css";
+
+type ProfileType = {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  city: string;
+  pincode: string;
+};
 
 export default function ProfilePage() {
   const { user, getAccessTokenSilently, isAuthenticated, isLoading } =
     useAuth0();
 
-  const [profile, setProfile] = useState({
+  const [profile, setProfile] = useState<ProfileType>({
     firstName: "",
     lastName: "",
     phone: "",
@@ -20,6 +31,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -66,6 +78,7 @@ export default function ProfilePage() {
       });
 
       alert("Profile saved!");
+      setEditMode(false);
     } catch (err) {
       console.error(err);
       setError("Failed to save profile");
@@ -74,31 +87,34 @@ export default function ProfilePage() {
     }
   };
 
-  if (isLoading || loading)
+  if (isLoading || loading) {
     return (
-      <Box
-        boxShadow="none"
-        sx={{ display: "flex", justifyContent: "center", mt: 10 }}
-      >
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
         <CircularProgress />
       </Box>
     );
-
-  if (!isAuthenticated) {
-    return <Typography variant="h6">Please login.</Typography>;
   }
 
   return (
-    <AppLayout>
-      <Container maxWidth="md">
-        <ProfileForm
-          profile={profile}
-          onChange={handleChange}
-          onSave={saveProfile}
-          saving={saving}
-          error={error}
-        />
-      </Container>
-    </AppLayout>
+    <Container maxWidth="md">
+      <ProfileHeader
+        user={user}
+        profile={profile}
+        editMode={editMode}
+        onEdit={() => setEditMode(true)}
+        onCancel={() => setEditMode(false)}
+        onSave={saveProfile}
+        saving={saving}
+        onChange={handleChange}
+      />
+
+      <ProfileInfoSection
+        profile={profile}
+        editMode={editMode}
+        onChange={handleChange}
+        error={error}
+      />
+      <ActionCards />
+    </Container>
   );
 }
