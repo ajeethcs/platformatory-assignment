@@ -1,39 +1,30 @@
+version: "3.8"
+
 services:
-  postgres:
-    image: postgres:15
-    container_name: postgres
-    environment:
-      POSTGRES_USER: temporal
-      POSTGRES_PASSWORD: temporal
-      POSTGRES_DB: temporal
+  frontend:
+    build:
+      context: ./frontend
     ports:
-      - "5432:5432"
-
-  temporal:
-    image: temporalio/auto-setup:1.24.0
-    container_name: temporal
-    environment:
-      DB: postgresql
-      DB_PORT: 5432
-      POSTGRES_USER: temporal
-      POSTGRES_PWD: temporal
-      POSTGRES_SEEDS: postgres
-      CONFIG_TEMPLATE_PATH: /etc/temporal/config/config_template.yaml
-      DYNAMIC_CONFIG_FILE_PATH: /etc/temporal/config/dynamicconfig/development-sql.yaml
-      SKIP_CHMOD: "true"
-    volumes:
-      - ./backend/src/temporal/config:/etc/temporal/config:ro
-    ports:
-      - "7233:7233"
+      - "3000:80"
     depends_on:
-      - postgres
+      - backend
 
-  temporal-ui:
-    image: temporalio/ui:2.24.0
-    container_name: temporal-ui
+  backend:
+    build:
+      context: ./backend
     environment:
-      TEMPORAL_ADDRESS: temporal:7233
+      - TEMPORAL_ADDRESS=temporal:7233
+      - NODE_ENV=production
     ports:
-      - "8080:8080"
+      - "5000:5000"
     depends_on:
       - temporal
+
+  temporal:
+    image: temporalio/auto-setup:1.23
+    environment:
+      - DB=sqlite
+      - TEMPORAL_UI_PORT=8088
+    ports:
+      - "7233:7233"
+      - "8088:8088"
