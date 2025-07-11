@@ -15,10 +15,19 @@ services:
     environment:
       - TEMPORAL_ADDRESS=temporal:7233
       - NODE_ENV=production
+      - MONGO_URI=mongodb://mongo:27017/platformatory
     ports:
       - "5000:5000"
     depends_on:
+      - mongo
       - temporal
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
 
   temporal:
     image: temporalio/auto-setup:1.23
@@ -28,3 +37,6 @@ services:
     ports:
       - "7233:7233"
       - "8088:8088"
+
+volumes:
+  mongo_data:
