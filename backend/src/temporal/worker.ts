@@ -1,7 +1,7 @@
+import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { Worker } from "@temporalio/worker";
 import * as activities from "./activities/userActivities";
-import dotenv from "dotenv";
 
 dotenv.config();
 

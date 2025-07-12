@@ -12,7 +12,8 @@ export async function updateUserWorkflow(user: any) {
   const updatedUser = await activities.saveToMongo(user);
 
   // Wait 10 seconds
-  await sleep(10_000);
+  // await sleep(10_000);
+  await new Promise((resolve) => setTimeout(resolve, 10_000));
 
   // Call CrudCrud
   await activities.updateCrudCrud(updatedUser);
