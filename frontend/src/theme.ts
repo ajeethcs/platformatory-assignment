@@ -1,24 +1,36 @@
-// theme.ts
+// src/theme.ts
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#3D52A0", // Replace with your desired primary color
+      main: "#2563eb", // Blue-600
+    },
+    secondary: {
+      main: "#facc15", // Yellow-400
+    },
+    text: {
+      primary: "#000000",
+      secondary: "#6b7280",
+    },
+    background: {
+      default: "#ffffff",
     },
   },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: 12, // Applies to all buttons
-          textTransform: "none", // Optional: prevent ALL CAPS
-        },
-      },
+  typography: {
+    fontFamily: "Inter, sans-serif",
+    h2: {
+      fontWeight: 800,
+      fontSize: "3rem",
     },
-  },
-  shape: {
-    borderRadius: 12, // Affects other components like Paper, Card, etc.
+    subtitle1: {
+      fontSize: "1rem",
+      color: "#6b7280",
+    },
+    button: {
+      textTransform: "none",
+      fontWeight: 600,
+    },
   },
 });
 

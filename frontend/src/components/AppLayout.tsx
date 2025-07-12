@@ -10,7 +10,7 @@ export default function AppLayout({ children }: Props) {
     <Box boxShadow="none" sx={{ display: "flex" }}>
       <CssBaseline />
       <Box boxShadow="none" component="main" className="main-content">
-        {children}
+        {/* {children} */}
       </Box>
     </Box>
   );
