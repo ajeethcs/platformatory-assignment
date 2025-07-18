@@ -129,7 +129,7 @@ export default function ProfilePage() {
         onChange={handleChange}
         error={error}
       />
-      <ActionCards />
+      {/* <ActionCards /> */}
       <Snackbar
         open={openNotification}
         autoHideDuration={6000}

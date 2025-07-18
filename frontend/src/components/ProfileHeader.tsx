@@ -7,7 +7,7 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-import { User } from "@auth0/auth0-react";
+import { useAuth0, User } from "@auth0/auth0-react";
 
 type Props = {
   user: User | undefined;
@@ -30,25 +30,31 @@ export default function ProfileHeader({
   saving,
   onChange,
 }: Props) {
+  const { logout } = useAuth0();
   return (
     <Paper square={false} variant="outlined" className="profile-banner">
       <Box className="cover-banner" />
-      <Box className="profile-header-content">
-        <Avatar
-          src={user?.picture}
-          sx={{ width: 96, height: 96, border: "4px solid white" }}
-        />
-        <Box
-          mt={2}
-          sx={{
-            display: "flex",
-            gap: 2,
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          {editMode ? (
-            <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
+        <Box style={{ flex: 1 }} className="profile-header-content">
+          <Avatar
+            src={user?.picture}
+            sx={{ width: 96, height: 96, border: "4px solid white" }}
+          />
+          <Box
+            mt={2}
+            sx={{
+              display: "flex",
+              gap: 2,
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            {editMode ? (
               <Stack direction="row" spacing={2}>
                 <TextField
                   name="firstName"
@@ -65,41 +71,50 @@ export default function ProfileHeader({
                   size="small"
                 />
               </Stack>
-            </>
-          ) : (
-            <>
+            ) : (
               <Typography variant="h5" fontWeight={600}>
                 {profile.firstName} {profile.lastName}
               </Typography>
-            </>
-          )}
-          <Typography variant="body2" color="textSecondary">
-            {profile.city || "Your city"}, India
-          </Typography>
-        </Box>
+            )}
+            <Typography variant="body2" color="textSecondary">
+              {profile.city || "Your city"}, India
+            </Typography>
+          </Box>
 
-        <Stack direction="row" spacing={2} mt={2}>
-          {editMode ? (
-            <>
-              <Button variant="contained" onClick={onSave} disabled={saving}>
-                {saving ? "Saving..." : "Save"}
+          <Stack direction="row" spacing={2} mt={2}>
+            {editMode ? (
+              <>
+                <Button variant="contained" onClick={onSave} disabled={saving}>
+                  {saving ? "Saving..." : "Save"}
+                </Button>
+                <Button variant="outlined" onClick={onCancel}>
+                  Cancel
+                </Button>
+              </>
+            ) : (
+              <Button
+                size="large"
+                variant="contained"
+                onClick={onEdit}
+                autoCapitalize="sentences"
+              >
+                Edit Profile
               </Button>
-              <Button variant="outlined" onClick={onCancel}>
-                Cancel
-              </Button>
-            </>
-          ) : (
-            <Button
-              size="large"
-              variant="contained"
-              onClick={onEdit}
-              autoCapitalize="sentences"
-            >
-              Edit Profile
-            </Button>
-          )}
-        </Stack>
-      </Box>
+            )}
+          </Stack>
+        </Box>
+        <div style={{ padding: "10px" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() =>
+              logout({ logoutParams: { returnTo: window.location.origin } })
+            }
+          >
+            Logout
+          </Button>
+        </div>
+      </div>
     </Paper>
   );
 }

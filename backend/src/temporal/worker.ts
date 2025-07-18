@@ -1,10 +1,12 @@
+import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { Worker } from "@temporalio/worker";
 import * as activities from "./activities/userActivities";
 
+dotenv.config();
+
 async function run() {
-  // Connect to MongoDB first
-  await mongoose.connect("mongodb://127.0.0.1:27017/platformatory");
+  await mongoose.connect(process.env.MONGO_URI!);
   console.log("Worker connected to MongoDB");
 
   const worker = await Worker.create({

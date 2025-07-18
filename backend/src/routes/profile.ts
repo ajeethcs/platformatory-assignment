@@ -30,8 +30,8 @@ router.post("/", checkJwt, async (req: any, res) => {
   }
 
   const connection = await Connection.connect({
-    // address: "localhost:7233",
-    address: "temporal:7233",
+    address: "127.0.0.1:7233",
+    // address: "temporal:7233",
   });
 
   const client = new WorkflowClient({

@@ -23,12 +23,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route
           path="/profile"
           element={
-            isAuthenticated ? <ProfilePage /> : <Navigate to="/login" replace />
+            isAuthenticated ? <ProfilePage /> : <Navigate to="/" replace />
           }
         />
         <Route
@@ -37,14 +36,10 @@ export default function App() {
             isAuthenticated ? (
               <Navigate to="/profile" replace />
             ) : (
-              <Navigate to="/login" replace />
+              <Navigate to="/" replace />
             )
           }
         />
-        {/* <Route
-          path="/profile"
-          element={isAuthenticated ? <Profile /> : <Navigate to="/" replace />}
-        /> */}
       </Routes>
     </BrowserRouter>
   );
