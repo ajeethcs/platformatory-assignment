@@ -5,6 +5,12 @@ const activities = proxyActivities<{
   updateCrudCrud(user: any): Promise<void>;
 }>({
   startToCloseTimeout: "30 seconds",
+  retry: {
+    maximumAttempts: 3,
+    initialInterval: "2s",
+    backoffCoefficient: 2,
+    maximumInterval: "30s",
+  },
 });
 
 export async function updateUserWorkflow(user: any) {
